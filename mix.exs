@@ -10,7 +10,16 @@ defmodule ExBovespa.MixProject do
       deps: deps(),
       source_url: "https://github.com/duzzifelipe/ex_bovespa",
       homepage_url: "https://github.com/duzzifelipe/ex_bovespa",
-      name: "ExBovespa"
+      name: "ExBovespa",
+      dialyzer: [
+        plt_add_apps: [
+          :ex_unit,
+          :mix,
+          :erts
+        ],
+        ignore_warnings: ".dialyzer_ignore.exs",
+        list_unused_filters: true
+      ]
     ]
   end
 
@@ -22,6 +31,8 @@ defmodule ExBovespa.MixProject do
 
   defp deps do
     [
+      {:credo, "~> 1.3.2", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0.0", runtime: false, allow_pre: false, only: [:dev, :test]},
       {:ex_doc, "~> 0.22", only: :dev, runtime: false}
     ]
   end

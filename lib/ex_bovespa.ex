@@ -1,18 +1,13 @@
 defmodule ExBovespa do
   @moduledoc """
-  Documentation for `ExBovespa`.
+  ExBovespa helps retrieving stocks data from
+  bovespa website by webscraping their HTML data
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> ExBovespa.hello()
-      :world
-
+  Returns a list of all stocks from bovespa website
   """
-  def hello do
-    :world
+  @spec stock_list() :: nil
+  def stock_list do
   end
 end
