@@ -18,3 +18,6 @@ end
 
 The docs can be found at [https://hexdocs.pm/ex_bovespa](https://hexdocs.pm/ex_bovespa).
 
+## Changelog
+
+Visit the application releases on the file [CHANGELOG.md](CHANGELOG.md).
