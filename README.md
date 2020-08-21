@@ -1,11 +1,10 @@
 # ExBovespa
 
-**TODO: Add description**
+The goal of this library is to provide an easy interface for other elixir applications to retrieve a list of all stocks listed on B3, including their code, ISIN, name and type.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `ex_bovespa` to your list of dependencies in `mix.exs`:
+Add `ex_bovespa` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -15,7 +14,7 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/ex_bovespa](https://hexdocs.pm/ex_bovespa).
+## Documentation
+
+The docs can be found at [https://hexdocs.pm/ex_bovespa](https://hexdocs.pm/ex_bovespa).
 
