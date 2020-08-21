@@ -49,3 +49,22 @@ jobs:
       with:
         name: test_coverage_report
         path: cover
+  publish-package:
+    if: github.event_name == 'release' && github.event.action == 'created'
+    needs: test
+    runs-on: ubuntu-latest
+    container:
+      image: elixir:1.10.3
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Dependencies
+      run: |
+        mix local.rebar --force
+        mix local.hex --force
+        mix deps.get
+        mix deps.compile
+    - name: Publish to Hex.pm
+      run: |
+        mix hex.organization deauth ex_bovespa
+        mix hex.organization auth ex_bovespa --key ${{ secrets.HEX_PM_KEY }}
+        mix hex.publish --yes
