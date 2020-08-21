@@ -11,6 +11,12 @@ defmodule ExBovespa.MixProject do
       source_url: "https://github.com/duzzifelipe/ex_bovespa",
       homepage_url: "https://github.com/duzzifelipe/ex_bovespa",
       name: "ExBovespa",
+      description: "A crawler for retrieving B3's stock list",
+      package: [
+        name: "ex_bovespa",
+        links: %{"GitHub" => "https://github.com/duzzifelipe/ex_bovespa"},
+        licenses: ["WTFPL"]
+      ],
       dialyzer: [
         plt_add_apps: [
           :ex_unit,
