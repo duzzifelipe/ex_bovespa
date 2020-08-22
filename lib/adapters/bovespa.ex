@@ -3,6 +3,8 @@ defmodule ExBovespa.Adapters.Bovespa do
   Retrieves data from Bovespa's website on listed companies path
   """
 
+  @behaviour ExBovespa.Adapters.BovespaBehaviour
+
   @base_url "http://bvmf.bmfbovespa.com.br/cias-listadas/Titulos-Negociaveis"
   @list_path "/ResumoTitulosNegociaveis.aspx"
   @details_path "/DetalheTitulosNegociaveis.aspx"
@@ -11,7 +13,7 @@ defmodule ExBovespa.Adapters.Bovespa do
   Gets data on index of listed companies page
   and returns the hole HTML structure
   """
-  @spec get_list() :: {:ok, String.t()} | {:error, :invalid_response}
+  @impl true
   def get_list do
     [or: "bus", cb: ""]
     |> client()
@@ -23,7 +25,7 @@ defmodule ExBovespa.Adapters.Bovespa do
   Receives the code for a stock and
   access its details page
   """
-  @spec get_item(code :: String.t()) :: {:ok, String.t()} | {:error, :invalid_response}
+  @impl true
   def get_item(code) do
     [or: "res", cb: code]
     |> client()
