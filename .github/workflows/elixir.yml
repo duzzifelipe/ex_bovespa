@@ -1,7 +1,7 @@
-name: Test
+name: Elixir
 on:
   push:
-    branches: "*"
+    branches: "**"
   release:
     types:
       - created

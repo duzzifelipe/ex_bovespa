@@ -22,9 +22,9 @@ defmodule ExBovespa do
   ### Example
 
       iex> ExBovespa.stock_list()
-      [
+      {:ok, [
         %Stock{}
-      ]
+      ]}
   """
   @spec stock_list() :: {:ok, list(Stock.t())} | {:error, :invalid_response}
   def stock_list do

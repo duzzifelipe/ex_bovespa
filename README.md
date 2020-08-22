@@ -14,6 +14,16 @@ def deps do
 end
 ```
 
+## Usage
+
+To have the entire list of Bovespa listed stocks, just call:
+
+```elixir
+{:ok, result} = ExBovespa.stock_list()
+```
+
+This function takes some time to return (since it fetches more than a thousand rows) so it is not recommended to run it frequently on your code, just to populate your own database.
+
 ## Documentation
 
 The docs can be found at [https://hexdocs.pm/ex_bovespa](https://hexdocs.pm/ex_bovespa).
