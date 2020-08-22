@@ -10,12 +10,12 @@ defmodule ExBovespa.Parsers.StockListHtml do
   @remove_blanks_regex ~r/\s+/
 
   @doc """
-  Receives an HTML tree and finds the table lines
+  Receives a HTML tree and finds the table lines
   corresponding to each listed company row
   then retrieves the company code, its name
   and its short name
   """
-  @spec parse(String.t()) :: list(Stock.t())
+  @spec parse(html :: String.t()) :: list(Stock.t())
   def parse(html) do
     html
     |> Floki.parse_document!()
