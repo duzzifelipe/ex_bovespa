@@ -15,7 +15,7 @@ defmodule ExBovespa.Parsers.StockDetailHtmlTest do
                    isin_code: "BRIBOVINDM18"
                  }
                ]
-             } = StockDetailHtml.parse(%Stock{}, @syntax)
+             } = StockDetailHtml.parse(@syntax, %Stock{})
     end
 
     test "should return details for multiple stocks" do
@@ -43,7 +43,7 @@ defmodule ExBovespa.Parsers.StockDetailHtmlTest do
                    isin_code: "BRIBOVINDM18"
                  }
                ]
-             } = StockDetailHtml.parse(%Stock{}, syntax)
+             } = StockDetailHtml.parse(syntax, %Stock{})
     end
 
     test "should return original struct if html doesn't match" do
@@ -64,7 +64,7 @@ defmodule ExBovespa.Parsers.StockDetailHtmlTest do
       ]
 
       for html <- invalid_trees do
-        assert %Stock{detail_list: nil} = StockDetailHtml.parse(%Stock{}, html)
+        assert %Stock{detail_list: nil} = StockDetailHtml.parse(html, %Stock{})
       end
     end
   end

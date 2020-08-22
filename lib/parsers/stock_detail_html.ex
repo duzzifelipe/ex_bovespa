@@ -11,8 +11,8 @@ defmodule ExBovespa.Parsers.StockDetailHtml do
   corresponding to each stock code for current company,
   then updates the given stock struct with StockDetail list
   """
-  @spec parse(stock :: Stock.t(), html :: String.t()) :: Stock.t()
-  def parse(stock, html) do
+  @spec parse(html :: String.t(), stock :: Stock.t()) :: Stock.t()
+  def parse(html, stock) do
     html
     |> Floki.parse_document!()
     |> Floki.find("table#ctl00_contentPlaceHolderConteudo_ctl00_grdDados_ctl01 tbody tr")
