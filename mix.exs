@@ -25,6 +25,9 @@ defmodule ExBovespa.MixProject do
         ],
         ignore_warnings: ".dialyzer_ignore.exs",
         list_unused_filters: true
+      ],
+      docs: [
+        main: "ExBovespa"
       ]
     ]
   end
