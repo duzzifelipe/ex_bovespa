@@ -18,7 +18,7 @@ defmodule ExBovespa.Parsers.StockListHtmlTest do
 
       assert struct_name == ExBovespa.Structs.Stock
 
-      assert Map.keys(first) == [:__struct__, :company_code, :name, :short_name]
+      assert Map.keys(first) == [:__struct__, :company_code, :detail_list, :name, :short_name]
       assert first.company_code == "MMMC"
       assert first.name == "3M COMPANY"
       assert first.short_name == "3M"
