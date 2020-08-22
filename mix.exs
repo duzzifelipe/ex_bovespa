@@ -39,7 +39,8 @@ defmodule ExBovespa.MixProject do
     [
       {:credo, "~> 1.3.2", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0.0", runtime: false, allow_pre: false, only: [:dev, :test]},
-      {:ex_doc, "~> 0.22", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false},
+      {:tesla, "~> 1.3.0"}
     ]
   end
 end
