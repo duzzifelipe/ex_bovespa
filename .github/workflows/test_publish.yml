@@ -64,7 +64,6 @@ jobs:
         mix deps.get
         mix deps.compile
     - name: Publish to Hex.pm
-      run: |
-        mix hex.organization deauth ex_bovespa
-        mix hex.organization auth ex_bovespa --key ${{ secrets.HEX_PM_KEY }}
-        mix hex.publish --yes
+      run: mix hex.publish --yes
+      env:
+        HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
