@@ -19,7 +19,7 @@ end
 To have the entire list of Bovespa listed stocks, just call:
 
 ```elixir
-ExBovespa.stock_list()
+{:ok, result} = ExBovespa.stock_list()
 ```
 
 This function takes some time to return (since it fetches more than a thousand rows) so it is not recommended to run it frequently on your code, just to populate your own database.
