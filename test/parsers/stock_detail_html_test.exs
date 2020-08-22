@@ -4,10 +4,20 @@ defmodule ExBovespa.Parsers.StockDetailHtmlTest do
   alias ExBovespa.Parsers.StockDetailHtml
   alias ExBovespa.Structs.{Stock, StockDetail}
 
-  @syntax File.read!("test/support/fixtures/stock_detail_html_page.html")
-
   describe "parse/2" do
     test "should return main details from page" do
+      syntax = """
+      <html>
+        <body>
+          <table id="ctl00_contentPlaceHolderConteudo_ctl00_grdDados_ctl01">
+            <tbody>
+              <tr><td>BRIBOVINDM18</td><td></td><td>IBOV11</td></tr>
+            </tbody>
+          </table>
+        </body>
+      </html>
+      """
+
       assert %Stock{
                detail_list: [
                  %StockDetail{
@@ -15,7 +25,7 @@ defmodule ExBovespa.Parsers.StockDetailHtmlTest do
                    isin_code: "BRIBOVINDM18"
                  }
                ]
-             } = StockDetailHtml.parse(@syntax, %Stock{})
+             } = StockDetailHtml.parse(syntax, %Stock{})
     end
 
     test "should return details for multiple stocks" do

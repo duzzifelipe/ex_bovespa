@@ -3,17 +3,33 @@ defmodule ExBovespa.Parsers.StockListHtmlTest do
 
   alias ExBovespa.Parsers.StockListHtml
 
-  @syntax File.read!("test/support/fixtures/stock_list_html_page.html")
-
   describe "parse/1" do
-    test "should return full list from page" do
-      parsed = StockListHtml.parse(@syntax)
+    test "should return the list and correctly build the struct" do
+      syntax = """
+      <html>
+        <body>
+          <table id="ctl00_contentPlaceHolderConteudo_grdEmpresas_ctl01">
+            <tbody>
+              <tr>
+                <td>
+                  <a href="http://bvmf.bmfbovespa.com.br/cias-listadas/Titulos-Negociaveis/DetalheTitulosNegociaveis.aspx?or=res&amp;cb=MMMC&amp;tip=N&amp;idioma=pt-BR">
+                  3M
+                  COMPANY
+                  </a>
+                </td>
+                <td>
+                  <a href="http://bvmf.bmfbovespa.com.br/cias-listadas/Titulos-Negociaveis/DetalheTitulosNegociaveis.aspx?or=res&amp;cb=MMMC&amp;tip=N&amp;idioma=pt-BR">
+                  3M
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </body>
+      </html>
+      """
 
-      assert Enum.count(parsed) == 1257
-    end
-
-    test "should build correctly the struct" do
-      parsed = StockListHtml.parse(@syntax)
+      parsed = StockListHtml.parse(syntax)
       %struct_name{} = first = Enum.at(parsed, 0)
 
       assert struct_name == ExBovespa.Structs.Stock
