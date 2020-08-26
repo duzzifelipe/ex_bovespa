@@ -33,7 +33,8 @@ defmodule ExBovespa.Parsers.StockDetailHtml do
   end
 
   # a most common row, that includes isin, specification and code
-  defp parse_row({"tr", _attrs, [first_item, _second_item, third_item]}) do
+  # and could have more data to the right (ignored as tail)
+  defp parse_row({"tr", _attrs, [first_item, _second_item, third_item | _tail]}) do
     with {:ok, isin_code} <- parse_item(first_item),
          {:ok, code} <- parse_item(third_item) do
       %StockDetail{
