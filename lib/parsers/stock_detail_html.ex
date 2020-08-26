@@ -22,6 +22,17 @@ defmodule ExBovespa.Parsers.StockDetailHtml do
     |> merge_results_into_struct(stock)
   end
 
+  # a row with only isin code, but without code
+  defp parse_row({"tr", _attrs, [first_item, _second_item]}) do
+    with {:ok, isin_code} <- parse_item(first_item) do
+      %StockDetail{
+        isin_code: String.trim(isin_code),
+        code: nil
+      }
+    end
+  end
+
+  # a most common row, that includes isin, specification and code
   defp parse_row({"tr", _attrs, [first_item, _second_item, third_item]}) do
     with {:ok, isin_code} <- parse_item(first_item),
          {:ok, code} <- parse_item(third_item) do
