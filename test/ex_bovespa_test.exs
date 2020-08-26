@@ -128,4 +128,12 @@ defmodule ExBovespaTest do
              end) =~ "[error] Elixir.ExBovespa.get_item error={:error, :invalid_response}"
     end
   end
+
+  describe "broker_list/0" do
+    test "returns empty list from service"
+
+    test "returns list items"
+
+    test "returns http error from list service"
+  end
 end

@@ -5,5 +5,6 @@ if Mix.env() == :test do
 
   config :ex_bovespa,
     parallelism: 1,
-    adapter_module: ExBovespa.Adapters.BovespaMock
+    stock_adapter_module: ExBovespa.Adapters.BovespaMock,
+    broker_adapter_module: ExBovespa.Adapters.B3Mock
 end

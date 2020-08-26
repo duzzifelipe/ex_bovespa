@@ -4,13 +4,22 @@ defmodule ExBovespa do
   bovespa website by webscraping their HTML data
   """
 
-  alias ExBovespa.Parsers.{StockDetailHtml, StockListHtml}
-  alias ExBovespa.Structs.Stock
+  alias ExBovespa.Parsers.{BrokerListHtml, StockDetailHtml, StockListHtml}
+  alias ExBovespa.Structs.{Broker, Stock}
 
   require Logger
 
   @parallel_chunk_size Application.get_env(:ex_bovespa, :parallelism, 100)
-  @adapter_module Application.get_env(:ex_bovespa, :adapter_module, ExBovespa.Adapters.Bovespa)
+  @stock_adapter_module Application.get_env(
+                          :ex_bovespa,
+                          :stock_adapter_module,
+                          ExBovespa.Adapters.Bovespa
+                        )
+  @broker_adapter_module Application.get_env(
+                           :ex_bovespa,
+                           :broker_adapter_module,
+                           ExBovespa.Adapters.B3
+                         )
 
   @doc """
   Returns a list of all stocks from bovespa website.
@@ -30,7 +39,7 @@ defmodule ExBovespa do
   def stock_list do
     Logger.debug("#{__MODULE__}.stock_list")
 
-    case @adapter_module.get_list() do
+    case @stock_adapter_module.get_list() do
       {:ok, html} ->
         {:ok, parse_items(html)}
 
@@ -59,13 +68,60 @@ defmodule ExBovespa do
   defp get_item(%Stock{company_code: code} = stock) do
     Logger.debug("#{__MODULE__}.get_item")
 
-    case @adapter_module.get_item(code) do
+    case @stock_adapter_module.get_item(code) do
       {:ok, html} ->
         StockDetailHtml.parse(html, stock)
 
       error ->
         Logger.error("#{__MODULE__}.get_item error=#{inspect(error)}")
         stock
+    end
+  end
+
+  @doc """
+  Returns a list of all brokers from bovespa website.
+
+  This resource on bovespa's website uses pagination,
+  so each html request and parser will return a list
+  of items and paging information, that will be
+  used to loop until all pages are visited.
+
+  ### Example
+
+      iex> ExBovespa.broker_list()
+      {:ok, [
+        %Broker{}
+      ]}
+  """
+  @spec broker_list() :: {:ok, list(Broker.t())} | {:error, :invalid_response}
+  def broker_list do
+    Logger.debug("#{__MODULE__}.broker_list")
+
+    do_get_broker_list([], 0, nil)
+  end
+
+  # when the two paginator items (current_page, total_pages)
+  # are the same (max_page, max_page), will return the acc
+  defp do_get_broker_list(acc, max_page, max_page), do: {:ok, acc}
+
+  defp do_get_broker_list(acc, current_page, total_pages) do
+    Logger.debug(
+      "#{__MODULE__}.do_get_broker_list current_page=#{current_page} total_pages=#{total_pages}"
+    )
+
+    case @broker_adapter_module.get_company_list_by_page(current_page + 1) do
+      {:ok, html} ->
+        %{
+          items: items,
+          current_page: new_current_page,
+          total_pages: new_total_pages
+        } = BrokerListHtml.parse(html)
+
+        do_get_broker_list(acc ++ items, new_current_page, new_total_pages)
+
+      error ->
+        Logger.error("#{__MODULE__}.do_get_broker_list error=#{inspect(error)}")
+        error
     end
   end
 end

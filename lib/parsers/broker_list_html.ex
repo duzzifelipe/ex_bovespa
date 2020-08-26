@@ -47,10 +47,13 @@ defmodule ExBovespa.Parsers.BrokerListHtml do
     |> build_broker()
   end
 
-  defp build_broker([name, code]) do
+  # sets the last item as the code
+  # and rejoins the others
+  # since a name can be separated by "-"
+  defp build_broker(list) do
     %Broker{
-      name: name,
-      code: code
+      name: list |> Enum.slice(0..-2) |> Enum.join(" - "),
+      code: Enum.at(list, -1)
     }
   end
 
