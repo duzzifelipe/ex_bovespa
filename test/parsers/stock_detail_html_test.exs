@@ -77,5 +77,59 @@ defmodule ExBovespa.Parsers.StockDetailHtmlTest do
         assert %Stock{detail_list: nil} = StockDetailHtml.parse(html, %Stock{})
       end
     end
+
+    test "parse table with only two columns" do
+      syntax = """
+      <html>
+        <body>
+          <table id="ctl00_contentPlaceHolderConteudo_ctl00_grdDados_ctl01">
+            <tbody>
+              <tr><td>BRIBOVINDM18</td><td>CT2</td></tr>
+            </tbody>
+          </table>
+        </body>
+      </html>
+      """
+
+      assert %Stock{
+               detail_list: [
+                 %StockDetail{
+                   code: nil,
+                   isin_code: "BRIBOVINDM18"
+                 }
+               ]
+             } = StockDetailHtml.parse(syntax, %Stock{})
+    end
+
+    test "parse table with more than three columns" do
+      syntax = """
+      <html>
+        <body>
+          <table id="ctl00_contentPlaceHolderConteudo_ctl00_grdDados_ctl01">
+            <tbody>
+              <tr>
+                <td>BRIBOVINDM18</td>
+                <td>ON MA</td>
+                <td>IBOV11</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </body>
+      </html>
+      """
+
+      assert %Stock{
+               detail_list: [
+                 %StockDetail{
+                   code: "IBOV11",
+                   isin_code: "BRIBOVINDM18"
+                 }
+               ]
+             } = StockDetailHtml.parse(syntax, %Stock{})
+    end
   end
 end
