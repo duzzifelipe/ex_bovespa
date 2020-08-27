@@ -97,19 +97,20 @@ defmodule ExBovespa do
   def broker_list do
     Logger.debug("#{__MODULE__}.broker_list")
 
-    do_get_broker_list([], 0, nil)
+    do_get_broker_list([], 1, nil)
   end
 
   # when the two paginator items (current_page, total_pages)
   # are the same (max_page, max_page), will return the acc
-  defp do_get_broker_list(acc, max_page, max_page), do: {:ok, acc}
+  defp do_get_broker_list(acc, current_page, total_pages) when current_page > total_pages,
+    do: {:ok, acc}
 
   defp do_get_broker_list(acc, current_page, total_pages) do
     Logger.debug(
       "#{__MODULE__}.do_get_broker_list current_page=#{current_page} total_pages=#{total_pages}"
     )
 
-    case @broker_adapter_module.get_company_list_by_page(current_page + 1) do
+    case @broker_adapter_module.get_company_list_by_page(current_page) do
       {:ok, html} ->
         %{
           items: items,
@@ -117,7 +118,11 @@ defmodule ExBovespa do
           total_pages: new_total_pages
         } = BrokerListHtml.parse(html)
 
-        do_get_broker_list(acc ++ items, new_current_page, new_total_pages)
+        if is_nil(new_current_page) or is_nil(new_total_pages) do
+          {:error, :invalid_response}
+        else
+          do_get_broker_list(acc ++ items, new_current_page + 1, new_total_pages)
+        end
 
       error ->
         Logger.error("#{__MODULE__}.do_get_broker_list error=#{inspect(error)}")
