@@ -25,7 +25,7 @@ To have the entire list of Bovespa listed stocks, just call:
 A sample of the data structure returned inside the list from `stock_list` is:
 
 ```elixir
-[
+{:ok, [
   %ExBovespa.Structs.Stock{
     company_code: "IBOV",
     detail_list: [
@@ -41,10 +41,27 @@ A sample of the data structure returned inside the list from `stock_list` is:
   },
   ...
   ...
-]
+]}
 ```
 
 This function takes some time to return (since it fetches more than a thousand rows) so it is not recommended to run it frequently on your code, just to populate your own database.
+
+To have the entire list of Bovespa brokers, call:
+
+```elixir
+{:ok, result} = ExBovespa.broker_list()
+```
+
+A sample of the data structure returned inside the list from `broker_list` is:
+
+```elixir
+{:ok, [
+  %ExBovespa.Structs.Broker{
+    code: "000",
+    name: "SAMPLE BROKER"
+  }
+]}
+```
 
 ## Documentation
 

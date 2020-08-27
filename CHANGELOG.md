@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] 2020-08-27
+- feat: broker list (#5)
+
 ## [0.1.1] 2020-08-26
 - fix: invalid table items (#4)
 - docs: example return on readme (#2)
