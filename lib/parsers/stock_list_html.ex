@@ -4,10 +4,10 @@ defmodule ExBovespa.Parsers.StockListHtml do
   a list of elements on a table
   """
 
+  alias ExBovespa.Helpers.StringHelper
   alias ExBovespa.Structs.Stock
 
   @code_from_link_regex ~r/.*&cb=(.*)&tip=.*/
-  @remove_blanks_regex ~r/\s+/
 
   @doc """
   Receives a HTML tree and finds the table lines
@@ -31,8 +31,8 @@ defmodule ExBovespa.Parsers.StockListHtml do
          {:ok, code} <- code_from_link(link) do
       %Stock{
         company_code: code,
-        name: remove_blank_spaces(name),
-        short_name: remove_blank_spaces(short_name)
+        name: StringHelper.remove_blank_spaces(name),
+        short_name: StringHelper.remove_blank_spaces(short_name)
       }
     end
   end
@@ -53,11 +53,5 @@ defmodule ExBovespa.Parsers.StockListHtml do
       _ ->
         nil
     end
-  end
-
-  defp remove_blank_spaces(string) do
-    @remove_blanks_regex
-    |> Regex.replace(string, " ")
-    |> String.trim()
   end
 end
