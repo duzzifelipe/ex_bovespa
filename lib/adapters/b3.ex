@@ -7,14 +7,26 @@ defmodule ExBovespa.Adapters.B3 do
 
   @base_url "http://www.b3.com.br"
   @base_path "/pt_br/produtos-e-servicos/participantes/busca-de-participantes/busca-de-corretoras/"
+  @files_base_url "https://arquivos.b3.com.br/apinegocios/ticker"
 
   @doc """
   Do a post request on list page with needed parameters for pagination
   """
   @impl true
   def get_company_list_by_page(page) do
-    client()
+    www_client()
     |> Tesla.post(@base_path, body(page))
+    |> handle_response()
+  end
+
+  @doc """
+  Makes a request to the page that shows a price
+  table for a stock on a specific date
+  """
+  @impl true
+  def get_stock_price(code, %Date{} = date) do
+    json_client()
+    |> Tesla.get("/#{code}/#{date}")
     |> handle_response()
   end
 
@@ -53,11 +65,18 @@ defmodule ExBovespa.Adapters.B3 do
     }
   end
 
-  defp client do
+  defp www_client do
     Tesla.client([
       {Tesla.Middleware.BaseUrl, @base_url},
       {Tesla.Middleware.Headers, headers()},
       Tesla.Middleware.FormUrlencoded
+    ])
+  end
+
+  defp json_client do
+    Tesla.client([
+      {Tesla.Middleware.BaseUrl, @files_base_url},
+      Tesla.Middleware.JSON
     ])
   end
 

@@ -8,6 +8,7 @@ defmodule ExBovespa.Adapters.B3Test do
   @base_url "http://www.b3.com.br"
   @list_url @base_url <>
               "/pt_br/produtos-e-servicos/participantes/busca-de-participantes/busca-de-corretoras/"
+  @files_base_url "https://arquivos.b3.com.br/apinegocios/ticker"
 
   describe "get_company_list_by_page/1" do
     test "should return the html content if status is 200" do
@@ -47,6 +48,54 @@ defmodule ExBovespa.Adapters.B3Test do
         end)
 
         assert {:error, :invalid_response} = B3.get_company_list_by_page(Enum.random(1..20))
+      end
+    end
+  end
+
+  describe "get_stock_price/2" do
+    test "should raise error for invalid date format" do
+      code = :crypto.strong_rand_bytes(6)
+
+      dates = [
+        nil,
+        "2020-09-12",
+        NaiveDateTime.utc_now(),
+        DateTime.utc_now()
+      ]
+
+      for date <- dates do
+        assert_raise FunctionClauseError, fn ->
+          B3.get_stock_price(code, date)
+        end
+      end
+    end
+
+    test "should return json body if status is 200" do
+      code = :crypto.strong_rand_bytes(6)
+      date = Date.utc_today()
+      files_url = "#{@files_base_url}/#{code}/#{date}"
+
+      mock(fn %{method: :get, url: ^files_url, headers: headers} ->
+        assert [] = headers
+
+        %Tesla.Env{status: 200, body: %{}}
+      end)
+
+      assert {:ok, %{}} = B3.get_stock_price(code, date)
+    end
+
+    test "should return error for other statuses" do
+      statuses = Enum.to_list(100..199) ++ Enum.to_list(201..599)
+      code = :crypto.strong_rand_bytes(6)
+      date = Date.utc_today()
+      files_url = "#{@files_base_url}/#{code}/#{date}"
+
+      for status <- statuses do
+        mock(fn %{method: :get, url: ^files_url} ->
+          %Tesla.Env{status: status, body: ""}
+        end)
+
+        assert {:error, :invalid_response} = B3.get_stock_price(code, date)
       end
     end
   end
