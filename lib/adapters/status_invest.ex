@@ -10,6 +10,7 @@ defmodule ExBovespa.Adapters.StatusInvest do
   @stock_list_path "/acao/companiesnavigation"
   @price_path "/category/tickerprice"
   @page_size 10_000
+  @price_range_types Enum.map(Range.new(-1, 4), &to_string/1)
 
   @doc """
   Gets json data from the list of FIIs
@@ -44,11 +45,13 @@ defmodule ExBovespa.Adapters.StatusInvest do
     4: 5 years
   """
   @impl true
-  def get_stock_price(code, type) do
+  def get_stock_price(code, type) when type in @price_range_types do
     client()
     |> Tesla.get(@price_path, query: [ticker: code, type: type])
     |> handle_response()
   end
+
+  def get_stock_price(_code, _type), do: {:error, :invalid_parameters}
 
   defp handle_response({:ok, %Tesla.Env{status: 200, body: body}}) do
     {:ok, body}
