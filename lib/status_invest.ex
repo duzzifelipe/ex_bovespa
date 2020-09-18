@@ -3,9 +3,9 @@ defmodule ExBovespa.StatusInvest do
   Exposes data from https://statusinvest.com.br/ website
   """
 
-  require Logger
-
   alias ExBovespa.Structs.{StatusInvestPrice, StatusInvestStock}
+
+  require Logger
 
   @adapter_module Application.get_env(
                     :ex_bovespa,
@@ -35,15 +35,7 @@ defmodule ExBovespa.StatusInvest do
 
     case @adapter_module.get_fii_list() do
       {:ok, json} ->
-        {:ok,
-         json
-         |> Enum.map(fn item ->
-           %StatusInvestStock{
-             company_name: item |> Map.get("companyName"),
-             type: :fii,
-             code: item |> Map.get("url") |> String.split("/") |> Enum.at(-1)
-           }
-         end)}
+        {:ok, parse_list_items(json, :fii)}
 
       error ->
         Logger.error("#{__MODULE__}.fii_list error=#{inspect(error)}")
@@ -72,20 +64,22 @@ defmodule ExBovespa.StatusInvest do
 
     case @adapter_module.get_stock_list() do
       {:ok, json} ->
-        {:ok,
-         json
-         |> Enum.map(fn item ->
-           %StatusInvestStock{
-             company_name: item |> Map.get("companyName"),
-             type: :stock,
-             code: item |> Map.get("url") |> String.split("/") |> Enum.at(-1)
-           }
-         end)}
+        {:ok, parse_list_items(json, :stock)}
 
       error ->
         Logger.error("#{__MODULE__}.stock_list error=#{inspect(error)}")
         error
     end
+  end
+
+  defp parse_list_items(json, type) do
+    Enum.map(json, fn item ->
+      %StatusInvestStock{
+        company_name: Map.get(item, "companyName"),
+        type: type,
+        code: item |> Map.get("url") |> String.split("/") |> Enum.at(-1)
+      }
+    end)
   end
 
   @doc """
@@ -117,17 +111,19 @@ defmodule ExBovespa.StatusInvest do
   @spec get_price(
           code :: String.t(),
           range :: :one_day | :five_days | :one_month | :six_months | :one_year | :five_years
-        ) :: {:ok, list(StatusInvestPrice.t())} | {:error, :invalid_response}
-  def get_price(code, range)
-      when range in ~w/one_day five_days one_month six_months one_year five_years/a do
-    Logger.debug("#{__MODULE__}.stock_list")
+        ) ::
+          {:ok, list(StatusInvestPrice.t())}
+          | {:error, :invalid_response}
+          | {:error, :invalid_parameters}
+  def get_price(code, range) do
+    Logger.debug("#{__MODULE__}.get_price")
 
     case @adapter_module.get_stock_price(code, parse_range(range)) do
       {:ok, json} ->
         {:ok, json |> Map.get("prices") |> Enum.map(&build_price(&1, range))}
 
       error ->
-        Logger.error("#{__MODULE__}.stock_list error=#{inspect(error)}")
+        Logger.error("#{__MODULE__}.get_price error=#{inspect(error)}")
         error
     end
   end
@@ -138,6 +134,7 @@ defmodule ExBovespa.StatusInvest do
   defp parse_range(:six_months), do: "2"
   defp parse_range(:one_year), do: "3"
   defp parse_range(:five_years), do: "4"
+  defp parse_range(_invalid), do: nil
 
   defp build_price(row, range) do
     date = row |> Map.get("date") |> Timex.parse!("{D}/{M}/{YY} {h24}:{m}")
