@@ -7,12 +7,16 @@ defmodule ExBovespa.Parsers.PriceRowCsv do
   http://www.b3.com.br/en_us/market-data-and-indices/data-services/market-data/historical-data/equities/historical-quote-data/
   """
 
+  @doc """
+  Receives a file name and opens it as a stream
+  to apply data decoders
+  """
   def parse(file_name) do
     [header | items] =
       file_name
       |> File.stream!()
-      |> Stream.with_index()
       |> Stream.map(&decode_line/1)
+      |> Stream.drop(-1)
       |> Enum.to_list()
 
     [
@@ -21,23 +25,8 @@ defmodule ExBovespa.Parsers.PriceRowCsv do
     ]
   end
 
-  defp decode_line({line, 0}), do: decode_header(line)
-
-  defp decode_line({line, _index}), do: decode_item(line)
-
-  defp decode_header(
-         <<_type::binary-size(2), file_name::binary-size(13), source::binary-size(8),
-           created_at::binary-size(8), _::bitstring>>
-       ) do
-    %{
-      file_name: file_name,
-      source: String.trim(source),
-      created_at: parse_date(created_at)
-    }
-  end
-
-  defp decode_item(
-         <<_tipreg::binary-size(2), date::binary-size(8), codbdi::binary-size(2),
+  defp decode_line(
+         <<tipreg::binary-size(2), date::binary-size(8), codbdi::binary-size(2),
            codneg::binary-size(12), tpmerc::binary-size(3), nomres::binary-size(12),
            especi::binary-size(10), prazot::binary-size(3), modref::binary-size(4),
            preabe::binary-size(13), premax::binary-size(13), premin::binary-size(13),
@@ -46,7 +35,8 @@ defmodule ExBovespa.Parsers.PriceRowCsv do
            voltot::binary-size(18), preexe::binary-size(13), indopc::binary-size(1),
            datven::binary-size(8), fatcot::binary-size(7), ptoexe::binary-size(13),
            codisi::binary-size(12), dismes::binary-size(3), _::bitstring>>
-       ) do
+       )
+       when tipreg == "01" do
     %{
       date: parse_date(date),
       bdi: codbdi,
@@ -75,6 +65,20 @@ defmodule ExBovespa.Parsers.PriceRowCsv do
       distribution_number: dismes
     }
   end
+
+  defp decode_line(
+         <<type::binary-size(2), file_name::binary-size(13), source::binary-size(8),
+           created_at::binary-size(8), _::bitstring>>
+       )
+       when type == "00" do
+    %{
+      file_name: file_name,
+      source: String.trim(source),
+      created_at: parse_date(created_at)
+    }
+  end
+
+  defp decode_line(<<type::binary-size(2), _::bitstring>>) when type == "99", do: nil
 
   defp parse_date(string) do
     string
