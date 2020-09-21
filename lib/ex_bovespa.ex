@@ -153,7 +153,7 @@ defmodule ExBovespa do
 
     with :ok <- File.write(file_path <> ".zip", file_contents),
          {:ok, [txt_path]} <- :zip.unzip(file_path_char ++ '.zip', cwd: file_path_char) do
-      PriceRowCsv.parse(txt_path)
+      {:ok, PriceRowCsv.parse(txt_path)}
     end
   end
 
