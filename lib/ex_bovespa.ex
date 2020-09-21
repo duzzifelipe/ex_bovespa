@@ -148,7 +148,7 @@ defmodule ExBovespa do
     do: year |> @stock_adapter_module.get_historical_file(month, day) |> parse_price_results()
 
   defp parse_price_results({:ok, file_contents}) do
-    file_path = "/tmp/" <> Base.encode64(:crypto.strong_rand_bytes(16), padding: false)
+    file_path = "/tmp/" <> Base.encode16(:crypto.strong_rand_bytes(16), padding: false)
     file_path_char = String.to_charlist(file_path)
 
     with :ok <- File.write(file_path <> ".zip", file_contents),
