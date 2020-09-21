@@ -4,7 +4,7 @@ defmodule ExBovespa do
   bovespa website by webscraping their HTML data
   """
 
-  alias ExBovespa.Parsers.{BrokerListHtml, PriceRowCsv, StockDetailHtml, StockListHtml}
+  alias ExBovespa.Parsers.{BrokerListHtml, PriceRowTxt, StockDetailHtml, StockListHtml}
   alias ExBovespa.Structs.{Broker, PriceRowHeader, PriceRowItem, Stock}
 
   require Logger
@@ -153,7 +153,7 @@ defmodule ExBovespa do
 
     with :ok <- File.write(file_path <> ".zip", file_contents),
          {:ok, [txt_path]} <- :zip.unzip(file_path_char ++ '.zip', cwd: file_path_char) do
-      {:ok, PriceRowCsv.parse(txt_path)}
+      {:ok, PriceRowTxt.parse(txt_path)}
     end
   end
 

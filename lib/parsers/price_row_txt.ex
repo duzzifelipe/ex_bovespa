@@ -1,4 +1,4 @@
-defmodule ExBovespa.Parsers.PriceRowCsv do
+defmodule ExBovespa.Parsers.PriceRowTxt do
   @moduledoc """
   From a text file name (as string), breaks
   each line and decode each column by their
