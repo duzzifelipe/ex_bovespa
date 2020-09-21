@@ -45,7 +45,9 @@ defmodule ExBovespa.MixProject do
       {:ex_doc, "~> 0.22", only: :dev, runtime: false},
       {:floki, "~> 0.27.0"},
       {:mox, "~> 0.5", only: :test},
-      {:tesla, "~> 1.3.0"}
+      {:tesla, "~> 1.3.0"},
+      {:decimal, "~> 1.9.0"},
+      {:timex, "~> 3.6.2"}
     ]
   end
 end
