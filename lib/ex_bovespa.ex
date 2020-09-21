@@ -4,8 +4,8 @@ defmodule ExBovespa do
   bovespa website by webscraping their HTML data
   """
 
-  alias ExBovespa.Parsers.{BrokerListHtml, StockDetailHtml, StockListHtml}
-  alias ExBovespa.Structs.{Broker, Stock}
+  alias ExBovespa.Parsers.{BrokerListHtml, PriceRowTxt, StockDetailHtml, StockListHtml}
+  alias ExBovespa.Structs.{Broker, PriceRowHeader, PriceRowItem, Stock}
 
   require Logger
 
@@ -20,6 +20,8 @@ defmodule ExBovespa do
                            :broker_adapter_module,
                            ExBovespa.Adapters.B3
                          )
+
+  @type success_price_return :: [header: PriceRowHeader.t(), items: list(PriceRowItem.t())]
 
   @doc """
   Returns a list of all stocks from bovespa website.
@@ -129,4 +131,31 @@ defmodule ExBovespa do
         error
     end
   end
+
+  @spec historical_price(year :: String.t()) ::
+          success_price_return() | {:error, :invalid_response}
+  def historical_price(year),
+    do: year |> @stock_adapter_module.get_historical_file() |> parse_price_results()
+
+  @spec historical_price(year :: String.t(), month :: String.t()) ::
+          success_price_return() | {:error, :invalid_response}
+  def historical_price(year, month),
+    do: year |> @stock_adapter_module.get_historical_file(month) |> parse_price_results()
+
+  @spec historical_price(year :: String.t(), month :: String.t(), day :: String.t()) ::
+          success_price_return() | {:error, :invalid_response}
+  def historical_price(year, month, day),
+    do: year |> @stock_adapter_module.get_historical_file(month, day) |> parse_price_results()
+
+  defp parse_price_results({:ok, file_contents}) do
+    file_path = "/tmp/" <> Base.encode16(:crypto.strong_rand_bytes(16), padding: false)
+    file_path_char = String.to_charlist(file_path)
+
+    with :ok <- File.write(file_path <> ".zip", file_contents),
+         {:ok, [txt_path]} <- :zip.unzip(file_path_char ++ '.zip', cwd: file_path_char) do
+      {:ok, PriceRowTxt.parse(txt_path)}
+    end
+  end
+
+  defp parse_price_results({:error, _} = error), do: error
 end

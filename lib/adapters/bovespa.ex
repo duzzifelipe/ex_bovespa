@@ -5,9 +5,10 @@ defmodule ExBovespa.Adapters.Bovespa do
 
   @behaviour ExBovespa.Adapters.BovespaBehaviour
 
-  @base_url "http://bvmf.bmfbovespa.com.br/cias-listadas/Titulos-Negociaveis"
-  @list_path "/ResumoTitulosNegociaveis.aspx"
-  @details_path "/DetalheTitulosNegociaveis.aspx"
+  @base_url "http://bvmf.bmfbovespa.com.br"
+  @list_path "/cias-listadas/Titulos-Negociaveis/ResumoTitulosNegociaveis.aspx"
+  @details_path "/cias-listadas/Titulos-Negociaveis/DetalheTitulosNegociaveis.aspx"
+  @price_path "/InstDados/SerHist"
 
   @doc """
   Gets data on index of listed companies page
@@ -30,6 +31,28 @@ defmodule ExBovespa.Adapters.Bovespa do
     [or: "res", cb: code]
     |> client()
     |> Tesla.get(@details_path)
+    |> handle_response()
+  end
+
+  @doc """
+  Download zip file contents from historical quotes website
+  (http://www.b3.com.br/en_us/market-data-and-indices/data-services/market-data/historical-data/equities/historical-quotes/)
+
+  You can retrieve a hole year, hole month or a specific day
+  by providing one, two and three arguments respectively
+  """
+  @impl true
+  def get_historical_file(year, month, day), do: download_file("D#{day}#{month}#{year}")
+
+  @impl true
+  def get_historical_file(year, month), do: download_file("M#{month}#{year}")
+
+  @impl true
+  def get_historical_file(year), do: download_file("A#{year}")
+
+  defp download_file(file_name) do
+    "#{@base_url}#{@price_path}/COTAHIST_#{file_name}.ZIP"
+    |> Tesla.get()
     |> handle_response()
   end
 
