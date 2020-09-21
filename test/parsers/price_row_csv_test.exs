@@ -1,6 +1,8 @@
 defmodule ExBovespa.Parsers.PriceRowCsvTest do
   use ExUnit.Case
+
   alias ExBovespa.Parsers.PriceRowCsv
+  alias ExBovespa.Structs.{PriceRowHeader, PriceRowItem}
 
   setup do
     template = """
@@ -20,7 +22,7 @@ defmodule ExBovespa.Parsers.PriceRowCsvTest do
     test "should parse headers", %{file_name: file_name} do
       assert [header: header, items: _] = PriceRowCsv.parse(file_name)
 
-      assert header == %{
+      assert header == %PriceRowHeader{
                file_name: "COTAHIST.2020",
                source: "BOVESPA",
                created_at: ~D[2020-09-18]
@@ -31,7 +33,7 @@ defmodule ExBovespa.Parsers.PriceRowCsvTest do
       assert [header: _, items: items] = PriceRowCsv.parse(file_name)
 
       assert items == [
-               %{
+               %PriceRowItem{
                  date: ~D[2020-09-18],
                  bdi: "02",
                  code: "A1AP34",
@@ -58,7 +60,7 @@ defmodule ExBovespa.Parsers.PriceRowCsvTest do
                  total_trades: 1,
                  volume_traded: elem(Decimal.parse("764185.80"), 1)
                },
-               %{
+               %PriceRowItem{
                  date: ~D[2020-09-18],
                  bdi: "02",
                  code: "A1BM34",

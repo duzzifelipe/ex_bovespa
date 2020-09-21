@@ -7,10 +7,16 @@ defmodule ExBovespa.Parsers.PriceRowCsv do
   http://www.b3.com.br/en_us/market-data-and-indices/data-services/market-data/historical-data/equities/historical-quote-data/
   """
 
+  alias ExBovespa.Structs.{PriceRowHeader, PriceRowItem}
+
   @doc """
   Receives a file name and opens it as a stream
   to apply data decoders
   """
+  @spec parse(file_name :: String.t()) :: [
+          header: PriceRowHeader.t(),
+          items: list(PriceRowItem.t())
+        ]
   def parse(file_name) do
     [header | items] =
       file_name
@@ -37,7 +43,7 @@ defmodule ExBovespa.Parsers.PriceRowCsv do
            codisi::binary-size(12), dismes::binary-size(3), _::bitstring>>
        )
        when tipreg == "01" do
-    %{
+    %PriceRowItem{
       date: parse_date(date),
       bdi: codbdi,
       code: String.trim(codneg),
@@ -71,7 +77,7 @@ defmodule ExBovespa.Parsers.PriceRowCsv do
            created_at::binary-size(8), _::bitstring>>
        )
        when type == "00" do
-    %{
+    %PriceRowHeader{
       file_name: file_name,
       source: String.trim(source),
       created_at: parse_date(created_at)
