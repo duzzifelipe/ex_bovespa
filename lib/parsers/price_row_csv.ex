@@ -13,7 +13,7 @@ defmodule ExBovespa.Parsers.PriceRowCsv do
   Receives a file name and opens it as a stream
   to apply data decoders
   """
-  @spec parse(file_name :: String.t()) :: [
+  @spec parse(file_name :: String.t() | charlist()) :: [
           header: PriceRowHeader.t(),
           items: list(PriceRowItem.t())
         ]
