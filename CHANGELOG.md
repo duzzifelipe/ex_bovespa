@@ -6,31 +6,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] 2020-09-22
+
+### Added
+- fix: change success type (#10)
+
 ## [0.4.0] 2020-09-21
 
-## Added
+### Added
 - feat: b3 pricing from report files (#8)
 
-## Changed
+### Changed
 - refactor: remove statusinvest service (#9)
 
 ## [0.3.0] 2020-09-17
 
-## Added
+### Added
 - feat: statusinvest data (#7)
 
 ## [0.2.0] 2020-08-27
 
-## Added
+### Added
 - feat: broker list (#5)
 
 ## [0.1.1] 2020-08-26
 
-## Added
+### Added
 - docs: example return on readme (#2)
 - docs: update readme (#1)
 
-## Fixed
+### Fixed
 - fix: invalid table items (#4)
 
 ## [0.1.0] 2020-08-22
