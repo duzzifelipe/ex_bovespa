@@ -21,7 +21,7 @@ defmodule ExBovespa do
                            ExBovespa.Adapters.B3
                          )
 
-  @type success_price_return :: [header: PriceRowHeader.t(), items: list(PriceRowItem.t())]
+  @type success_price_return :: {:ok, [header: PriceRowHeader.t(), items: list(PriceRowItem.t())]}
 
   @doc """
   Returns a list of all stocks from bovespa website.
