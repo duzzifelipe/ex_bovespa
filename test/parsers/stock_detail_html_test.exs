@@ -11,7 +11,7 @@ defmodule ExBovespa.Parsers.StockDetailHtmlTest do
         <body>
           <table id="ctl00_contentPlaceHolderConteudo_ctl00_grdDados_ctl01">
             <tbody>
-              <tr><td>BRIBOVINDM18</td><td></td><td>IBOV11</td></tr>
+              <tr><td>BRIBOVINDM18</td><td>ON</td><td>IBOV11</td></tr>
             </tbody>
           </table>
         </body>
@@ -34,8 +34,8 @@ defmodule ExBovespa.Parsers.StockDetailHtmlTest do
         <body>
           <table id="ctl00_contentPlaceHolderConteudo_ctl00_grdDados_ctl01">
             <tbody>
-              <tr><td>BRIBOVINDM18</td><td></td><td>IBOV11</td></tr>
-              <tr><td>BRIBOVINDM18</td><td></td><td>IBOV11</td></tr>
+              <tr><td>BRIBOVINDM18</td><td>PN</td><td>IBOV11</td></tr>
+              <tr><td>BRIBOVINDM18</td><td>UNT</td><td>IBOV11</td></tr>
             </tbody>
           </table>
         </body>

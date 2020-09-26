@@ -71,7 +71,7 @@ defmodule ExBovespaTest do
            <body>
              <table id="ctl00_contentPlaceHolderConteudo_ctl00_grdDados_ctl01">
                <tbody>
-                 <tr><td>BRIBOVINDM18</td><td></td><td>IBOV11</td></tr>
+                 <tr><td>BRIBOVINDM18</td><td>ON</td><td>IBOV11</td></tr>
                </tbody>
              </table>
            </body>
@@ -88,7 +88,8 @@ defmodule ExBovespaTest do
                   detail_list: [
                     %StockDetail{
                       code: "IBOV11",
-                      isin_code: "BRIBOVINDM18"
+                      isin_code: "BRIBOVINDM18",
+                      type: :stock
                     }
                   ]
                 }
