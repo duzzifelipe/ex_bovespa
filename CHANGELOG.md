@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] 2020-09-26
+
+### Added
+- feat: add stock type into details (#11)
+
 ## [0.4.1] 2020-09-22
 
 ### Added
