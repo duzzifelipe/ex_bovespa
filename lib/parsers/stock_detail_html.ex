@@ -4,6 +4,8 @@ defmodule ExBovespa.Parsers.StockDetailHtml do
   a struct of important data
   """
 
+  alias ExBovespa.Helpers.StringHelper
+  alias ExBovespa.Parsers.StockDetailData
   alias ExBovespa.Structs.{Stock, StockDetail}
 
   @doc """
@@ -16,35 +18,43 @@ defmodule ExBovespa.Parsers.StockDetailHtml do
     html
     |> Floki.parse_document!()
     |> Floki.find("table#ctl00_contentPlaceHolderConteudo_ctl00_grdDados_ctl01 tbody tr")
-    |> Stream.map(&parse_row/1)
+    |> Stream.map(&parse_row(&1, stock))
     |> Stream.filter(&(not is_nil(&1)))
     |> Enum.to_list()
     |> merge_results_into_struct(stock)
   end
 
   # a row with only isin code, but without code
-  defp parse_row({"tr", _attrs, [first_item, _second_item]}) do
+  defp parse_row({"tr", _attrs, [first_item, _second_item]}, _stock) do
     with {:ok, isin_code} <- parse_item(first_item) do
       %StockDetail{
         isin_code: String.trim(isin_code),
-        code: nil
+        code: nil,
+        type: nil
       }
     end
   end
 
   # a most common row, that includes isin, specification and code
   # and could have more data to the right (ignored as tail)
-  defp parse_row({"tr", _attrs, [first_item, _second_item, third_item | _tail]}) do
+  defp parse_row({"tr", _attrs, [first_item, second_item, third_item | _tail]}, stock) do
     with {:ok, isin_code} <- parse_item(first_item),
+         {:ok, description} <- parse_item(second_item),
          {:ok, code} <- parse_item(third_item) do
+      type =
+        description
+        |> StringHelper.remove_blank_spaces()
+        |> StockDetailData.parse_description(stock)
+
       %StockDetail{
         isin_code: String.trim(isin_code),
-        code: String.trim(code)
+        code: String.trim(code),
+        type: type
       }
     end
   end
 
-  defp parse_row(_), do: nil
+  defp parse_row(_, _), do: nil
 
   defp parse_item({"td", _attrs, [text]}) do
     {:ok, text}
