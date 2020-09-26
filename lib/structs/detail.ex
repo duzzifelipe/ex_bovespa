@@ -9,8 +9,9 @@ defmodule ExBovespa.Structs.StockDetail do
 
   @type t() :: %__MODULE__{
           code: String.t(),
-          isin_code: String.t()
+          isin_code: String.t(),
+          type: :atom
         }
 
-  defstruct [:code, :isin_code]
+  defstruct [:code, :isin_code, :type]
 end
