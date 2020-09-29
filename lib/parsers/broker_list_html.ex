@@ -51,10 +51,18 @@ defmodule ExBovespa.Parsers.BrokerListHtml do
   # and rejoins the others
   # since a name can be separated by "-"
   defp build_broker(list) do
-    %Broker{
-      name: list |> Enum.slice(0..-2) |> Enum.join(" - "),
-      code: Enum.at(list, -1)
-    }
+    name =
+      list
+      |> Enum.slice(0..-2)
+      |> Enum.join(" - ")
+
+    code =
+      list
+      |> Enum.at(-1)
+      |> String.replace(~r/\D/, "")
+      |> String.to_integer()
+
+    %Broker{name: name, code: code}
   end
 
   defp enumarate_pages(links) do

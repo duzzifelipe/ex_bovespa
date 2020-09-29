@@ -10,16 +10,16 @@ defmodule ExBovespa.Parsers.BrokerListHtmlTest do
                current_page: 3,
                total_pages: 5,
                items: [
-                 %Broker{code: "979", name: "ADVALOR DTVM LTDA"},
-                 %Broker{code: "39", name: "AGORA CTVM S/A"},
-                 %Broker{code: "4", name: "ALFA CCVM S.A."},
-                 %Broker{code: "226", name: "AMARIL FRANKLIN CTV LTDA."},
-                 %Broker{code: "147", name: "ATIVA INVESTIMENTOS S.A. CTCV"},
-                 %Broker{code: "4.002", name: "BANCO ANDBANK (BRASIL) S.A."},
-                 %Broker{code: "251", name: "BANCO BNP PARIBAS BRASIL S/A"},
-                 %Broker{code: "1.116", name: "BANCO CITIBANK"},
-                 %Broker{code: "359", name: "BANCO DAYCOVAL"},
-                 %Broker{code: "683", name: "BANCO MODAL"}
+                 %Broker{code: 979, name: "ADVALOR DTVM LTDA"},
+                 %Broker{code: 39, name: "AGORA CTVM S/A"},
+                 %Broker{code: 4, name: "ALFA CCVM S.A."},
+                 %Broker{code: 226, name: "AMARIL FRANKLIN CTV LTDA."},
+                 %Broker{code: 147, name: "ATIVA INVESTIMENTOS S.A. CTCV"},
+                 %Broker{code: 4002, name: "BANCO ANDBANK (BRASIL) S.A."},
+                 %Broker{code: 251, name: "BANCO BNP PARIBAS BRASIL S/A"},
+                 %Broker{code: 1116, name: "BANCO CITIBANK"},
+                 %Broker{code: 359, name: "BANCO DAYCOVAL"},
+                 %Broker{code: 683, name: "BANCO MODAL"}
                ]
              } = BrokerListHtml.parse(big_complete_tree())
     end
