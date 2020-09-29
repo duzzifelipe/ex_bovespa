@@ -207,8 +207,8 @@ defmodule ExBovespaTest do
 
       assert {:ok,
               [
-                %Broker{code: "1", name: "COMPANY FROM PAGE"},
-                %Broker{code: "2", name: "COMPANY FROM PAGE"}
+                %Broker{code: 1, name: "COMPANY FROM PAGE"},
+                %Broker{code: 2, name: "COMPANY FROM PAGE"}
               ]} = ExBovespa.broker_list()
     end
 
