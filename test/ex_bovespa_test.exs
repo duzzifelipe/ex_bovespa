@@ -150,79 +150,37 @@ defmodule ExBovespaTest do
   end
 
   describe "broker_list/0" do
-    @base_html """
-      <html>
-        <body>
-          <div class="lum-content">
-            <div class="lum-content-body">
-              <div class="large-12 columns">
-                <div class="row">
-                  <div class="large-8 columns">
-                    <div class="row corretoras">
-                      <div class="large-9 columns">
-                        <h6 class="subheader">
-                          <a href="">COMPANY FROM PAGE - ##page##</a></h6>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="large-5 large-centered columns text-center">
-                        <ul class="pagination">
-                          <li class="arrow unavailable"><a href="">«</a></li>
-                          <li class="##is-page-1##"><a href="">1</a>
-                          </li>
-                          <li class="##is-page-2##"><a href="">2</a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </body>
-      </html>
-    """
-
     test "returns empty list from service" do
-      expect(ExBovespa.Adapters.B3Mock, :get_company_list_by_page, fn _page_num ->
-        {:ok, "<html></html>"}
+      expect(ExBovespa.Adapters.B3Mock, :get_company_list, fn ->
+        {:ok, []}
       end)
 
-      assert {:error, :invalid_response} = ExBovespa.broker_list()
+      assert {:ok, []} = ExBovespa.broker_list()
     end
 
-    test "returns list items should call 2 pages" do
-      expect(ExBovespa.Adapters.B3Mock, :get_company_list_by_page, 2, fn page ->
-        html = String.replace(@base_html, "##page##", to_string(page))
-
-        case page do
-          1 ->
-            {:ok, String.replace(html, "##is-page-1##", "current")}
-
-          2 ->
-            {:ok, String.replace(html, "##is-page-2##", "current")}
-        end
+    test "returns list items as broker struct" do
+      expect(ExBovespa.Adapters.B3Mock, :get_company_list, fn ->
+        {:ok,
+         [
+           %{
+             "categories" => ";999;;1;;2;;3;;11;;44;",
+             "codes" => ";19352000;3;",
+             "document" => "02332886000104",
+             "name" => "XP INVESTIMENTOS CCTVM S/A",
+             "seals" => ";999;;72;73;75;78;323;"
+           }
+         ]}
       end)
 
       assert {:ok,
               [
-                %Broker{code: 1, name: "COMPANY FROM PAGE"},
-                %Broker{code: 2, name: "COMPANY FROM PAGE"}
+                %Broker{code: 3, name: "XP INVESTIMENTOS CCTVM S/A"}
               ]} = ExBovespa.broker_list()
     end
 
-    test "returns http error from list service on any page" do
-      expect(ExBovespa.Adapters.B3Mock, :get_company_list_by_page, 2, fn page ->
-        html = String.replace(@base_html, "##page##", to_string(page))
-
-        case page do
-          1 ->
-            {:ok, String.replace(html, "##is-page-1##", "current")}
-
-          2 ->
-            {:ok, "<html></html>"}
-        end
+    test "returns http error from list service" do
+      expect(ExBovespa.Adapters.B3Mock, :get_company_list, fn ->
+        {:error, :invalid_response}
       end)
 
       assert {:error, :invalid_response} = ExBovespa.broker_list()
