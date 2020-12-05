@@ -4,7 +4,7 @@ defmodule ExBovespa do
   bovespa website by webscraping their HTML data
   """
 
-  alias ExBovespa.Parsers.{BrokerListHtml, PriceRowTxt, StockDetailHtml, StockListHtml}
+  alias ExBovespa.Parsers.{PriceRowTxt, StockDetailHtml, StockListHtml}
   alias ExBovespa.Structs.{Broker, PriceRowHeader, PriceRowItem, Stock}
 
   require Logger
@@ -99,36 +99,38 @@ defmodule ExBovespa do
   def broker_list do
     Logger.debug("#{__MODULE__}.broker_list")
 
-    do_get_broker_list([], 1, nil)
-  end
+    case @broker_adapter_module.get_company_list() do
+      {:ok, list} ->
+        list =
+          Enum.map(list, fn row ->
+            %Broker{
+              name: Map.fetch!(row, "name"),
+              code:
+                row |> Map.fetch!("codes") |> get_broker_investment_code() |> String.to_integer()
+            }
+          end)
 
-  # when the two paginator items (current_page, total_pages)
-  # are the same (max_page, max_page), will return the acc
-  defp do_get_broker_list(acc, current_page, total_pages) when current_page > total_pages,
-    do: {:ok, acc}
-
-  defp do_get_broker_list(acc, current_page, total_pages) do
-    Logger.debug(
-      "#{__MODULE__}.do_get_broker_list current_page=#{current_page} total_pages=#{total_pages}"
-    )
-
-    case @broker_adapter_module.get_company_list_by_page(current_page) do
-      {:ok, html} ->
-        %{
-          items: items,
-          current_page: new_current_page,
-          total_pages: new_total_pages
-        } = BrokerListHtml.parse(html)
-
-        if is_nil(new_current_page) or is_nil(new_total_pages) do
-          {:error, :invalid_response}
-        else
-          do_get_broker_list(acc ++ items, new_current_page + 1, new_total_pages)
-        end
+        {:ok, list}
 
       error ->
         Logger.error("#{__MODULE__}.do_get_broker_list error=#{inspect(error)}")
         error
+    end
+  end
+
+  defp get_broker_investment_code(codes) do
+    list = String.split(codes, ";")
+
+    # the string starts with a ";"
+    # so the first item is in fact at position 1 (not 0)
+
+    first = Enum.at(list, 1)
+    second = Enum.at(list, 2)
+
+    if second != "" do
+      second
+    else
+      first
     end
   end
 
