@@ -4,8 +4,10 @@ defmodule ExBovespa do
   bovespa website by webscraping their HTML data
   """
 
+  @behaviour ExBovespa.Behaviour
+
   alias ExBovespa.Parsers.{PriceRowTxt, StockDetailHtml, StockListHtml}
-  alias ExBovespa.Structs.{Broker, PriceRowHeader, PriceRowItem, Stock}
+  alias ExBovespa.Structs.{Broker, Stock}
 
   require Logger
 
@@ -21,8 +23,6 @@ defmodule ExBovespa do
                            ExBovespa.Adapters.B3
                          )
 
-  @type success_price_return :: {:ok, [header: PriceRowHeader.t(), items: list(PriceRowItem.t())]}
-
   @doc """
   Returns a list of all stocks from bovespa website.
 
@@ -37,7 +37,7 @@ defmodule ExBovespa do
         %Stock{}
       ]}
   """
-  @spec stock_list() :: {:ok, list(Stock.t())} | {:error, :invalid_response}
+  @impl true
   def stock_list do
     Logger.debug("#{__MODULE__}.stock_list")
 
@@ -95,7 +95,7 @@ defmodule ExBovespa do
         %Broker{}
       ]}
   """
-  @spec broker_list() :: {:ok, list(Broker.t())} | {:error, :invalid_response}
+  @impl true
   def broker_list do
     Logger.debug("#{__MODULE__}.broker_list")
 
@@ -134,18 +134,15 @@ defmodule ExBovespa do
     end
   end
 
-  @spec historical_price(year :: String.t()) ::
-          success_price_return() | {:error, :invalid_response}
+  @impl true
   def historical_price(year),
     do: year |> @stock_adapter_module.get_historical_file() |> parse_price_results()
 
-  @spec historical_price(year :: String.t(), month :: String.t()) ::
-          success_price_return() | {:error, :invalid_response}
+  @impl true
   def historical_price(year, month),
     do: year |> @stock_adapter_module.get_historical_file(month) |> parse_price_results()
 
-  @spec historical_price(year :: String.t(), month :: String.t(), day :: String.t()) ::
-          success_price_return() | {:error, :invalid_response}
+  @impl true
   def historical_price(year, month, day),
     do: year |> @stock_adapter_module.get_historical_file(month, day) |> parse_price_results()
 

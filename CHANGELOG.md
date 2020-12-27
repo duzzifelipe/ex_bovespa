@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] 2020-12-27
+
+### Changed
+- chore: isolate behaviour in a module
+
 ## [0.7.0] 2020-12-05
 
 ### Fixed
